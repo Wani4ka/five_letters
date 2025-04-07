@@ -5,15 +5,12 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12"]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ vars.PYTHON_VERSION }}
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ vars.PYTHON_VERSION }}
         cache: 'pip'
     - name: Analyse code style
       run: |
