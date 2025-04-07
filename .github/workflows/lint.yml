@@ -14,10 +14,7 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+        cache: 'pip'
+    - name: Analyse code style
       run: |
-        python -m pip install --upgrade pip
-        pip install pycodestyle
-    - name: Analysing the code with pycodestyle
-      run: |
-        pycodestyle $(git ls-files '*.py')
+        make lint
