@@ -1,5 +1,6 @@
-from words import words
 from random import choice
+
+from words import words
 
 max_attempts = 6
 next_room_id = 1

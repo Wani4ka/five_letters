@@ -1,12 +1,12 @@
 import game
 
 if __name__ == '__main__':
-    roomID = game.create_room()
+    room_id = game.create_room()
 
     while True:
         guess = input()
         try:
-            response, removed = game.try_guess(roomID, guess)
+            response, removed = game.try_guess(room_id, guess)
         except Exception as e:
             print(str(e))
         else:
