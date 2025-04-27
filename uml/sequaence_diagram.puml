@@ -1,0 +1,59 @@
+@startuml
+!include /home/mflkee/.config/plantuml/dracula.puml
+actor User
+
+participant "main.py" as Main
+participant "Game"    as Game
+participant "Room"    as Room
+participant "words"   as Words
+
+== Запуск игры ==
+User -> Main       : запускает скрипт
+Main -> Game       : __init__()
+activate Game
+Game --> Main      : создан Game
+deactivate Game
+
+== Создание комнаты ==
+Main -> Game       : create_room()
+activate Game
+Game -> Room       : __init__(room_id)
+activate Room
+Room -> Words      : выбор случайного слова
+activate Words
+Words --> Room     : возвращает слово
+deactivate Words
+Room --> Game      : готовая комната
+deactivate Room
+Game --> Main      : возвращает объект Room
+deactivate Game
+
+== Цикл угадывания ==
+loop пока не finished
+    User -> Main   : вводит guess
+    Main -> Game   : try_guess(room_id, guess)
+    activate Game
+
+    Game -> Room   : try_guess(guess)
+    activate Room
+    Room --> Room  : проверка длины, upper(), attempts++
+    Room --> Room  : сначала метки “2” (точное совпадение)
+    Room --> Room  : затем метки “1” (буква есть)
+    Room --> Game  : возвращает response
+    deactivate Room
+
+    Game -> Room   : is_finished(guess)
+    activate Room
+    Room --> Game  : true/false
+    deactivate Room
+
+    alt finished == true
+        Game --> Main: (response, finished=true)
+    else
+        Game --> Main: (response, finished=false)
+    end
+    deactivate Game
+
+    Main --> User  : выводит подсказки и, если finished, сообщение об окончании
+end
+@enduml
