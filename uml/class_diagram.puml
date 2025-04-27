@@ -1,0 +1,33 @@
+@startuml
+!include /home/mflkee/.config/plantuml/dracula.puml
+
+package game {
+    class Game {
+        - next_room_id: int
+        - rooms: dict[int, Room]
+        --
+        + __init__(): None
+        + create_room(): Room
+        + try_guess(room_id: int, guess: str): (list, bool)
+    }
+
+    class Room {
+        + max_attempts: int
+        - room_id: int
+        - word: str
+        - attempts: int
+        --
+        + __init__(room_id: int): None
+        + try_guess(guess: str): list
+        + is_finished(guess: str): bool
+    }
+}
+
+class words {
+    {static} words: list[str]
+}
+
+Game "1" o-- "*" Room : manages
+Room --> words : uses
+
+@enduml
