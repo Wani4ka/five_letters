@@ -12,7 +12,7 @@ class Game:
         self.next_room_id += 1
         return room
 
-    def try_guess(self, room_id: int, guess: str) -> (list, bool, str | None):
+    def try_guess(self, room_id: int, guess: str) -> tuple[list, bool, str | None]:
         if room_id not in self.rooms:
             raise Exception('Комната не найдена')
         room = self.rooms[room_id]
