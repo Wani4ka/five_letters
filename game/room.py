@@ -1,5 +1,4 @@
-# game/room.py
-import random
+from random import choice
 from words import words
 
 class Room:
@@ -7,7 +6,7 @@ class Room:
 
     def __init__(self, room_id: int):
         self.room_id = room_id
-        self.word = random.choice(words)
+        self.word = choice(words)
         self.attempts = 0
 
     def try_guess(self, guess: str) -> list:

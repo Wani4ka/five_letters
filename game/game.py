@@ -1,4 +1,3 @@
-# game/game.py
 from game.room import Room
 
 class Game:
