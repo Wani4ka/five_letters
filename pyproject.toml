@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+# Include useful rule sets
+[tool.ruff.lint]
+extend-select = [
+  "E",   # pycodestyle (includes trailing newline W292)
+  "F",   # pyflakes
+  "B",   # flake8-bugbear
+  "N",   # pep8-naming
+  "UP",  # pyupgrade
+  "C90", # mccabe complexity
+  "I",   # isort (import sorting)
+  "W",   # additional warnings like W292
+]
