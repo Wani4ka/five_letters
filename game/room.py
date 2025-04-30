@@ -1,5 +1,7 @@
 from random import choice
+
 from words import words
+
 
 class Room:
     max_attempts = 6
@@ -11,8 +13,8 @@ class Room:
 
     def try_guess(self, guess: str) -> list:
         if len(guess) != 5:
-            raise Exception('Слово должно состоять из 5 символов')
-        
+            raise Exception("Слово должно состоять из 5 символов")
+
         guess = guess.upper()
         self.attempts += 1
 

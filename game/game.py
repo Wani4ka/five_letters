@@ -1,5 +1,6 @@
 from game.room import Room
 
+
 class Game:
     def __init__(self):
         self.next_room_id = 1
@@ -13,7 +14,7 @@ class Game:
 
     def try_guess(self, room_id: int, guess: str) -> tuple[list, bool, str | None]:
         if room_id not in self.rooms:
-            raise Exception('Комната не найдена')
+            raise Exception("Комната не найдена")
         room = self.rooms[room_id]
         response = room.try_guess(guess)
         finished = room.is_finished(guess)
