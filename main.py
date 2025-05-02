@@ -1,15 +1,19 @@
-import game
+from game.game import Game
 
-if __name__ == '__main__':
-    room_id = game.create_room()
+if __name__ == "__main__":
+    game = Game()
+    room = game.create_room()
+    print(f"Создана комната с id {room.room_id}. Угадайте слово!")
 
     while True:
-        guess = input()
+        guess = input("Введите слово: ")
         try:
-            response, removed = game.try_guess(room_id, guess)
+            response, finished, solution = game.try_guess(room.room_id, guess)
         except Exception as e:
             print(str(e))
         else:
-            print(response)
-            if removed:
+            print("Подсказки:", response)
+            if finished:
+                print("Игра окончена!")
+                print(f"Слово было: {solution}")
                 break
