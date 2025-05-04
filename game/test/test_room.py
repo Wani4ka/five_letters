@@ -40,19 +40,3 @@ def test_is_finished_max_attempts():
     room = Room(room_id=1)
     room.attempts = Room.max_attempts
     assert room.is_finished("xxxxx"), "Игра должна завершиться при max_attempts"
-
-
-def run_tests():
-    print("Запуск тестов для room.py")
-    try:
-        test_try_guess_correct ()
-        test_try_guess_wrong_length()
-        test_try_guess_partial_match()
-        test_is_finished_correct_guess()
-        test_is_finished_max_attempts()
-        print("Тесты пройдены!")
-    except AssertionError as e:
-        print(f"{e} не пройден")
-
-
-run_tests()

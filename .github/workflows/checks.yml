@@ -1,0 +1,49 @@
+name: Basic checks (linter and unit tests)
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ vars.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          cache: 'pip'
+      - name: Analyse code style
+        run: |
+          make lint
+
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ vars.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          cache: 'pip'
+      - name: Run unit tests
+        run: |
+          make install-deps
+          coverage run -m pytest -v
+          coverage report > coverage.txt
+          echo "Покрытие кода юнит-тестами (не отображаются пустые и полностью покрытые файлы):" > coverage.md
+          coverage report --format=markdown -m --skip-covered >> coverage.md
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: coverage.txt
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          file-path: coverage.md

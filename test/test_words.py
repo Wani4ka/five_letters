@@ -29,20 +29,3 @@ def test_words_cyrillic():
 def test_no_empty_strings():
     """Проверка на отсутствие пустых строк в списке."""
     assert '' not in words, "Список слов содержит пустую строку"
-
-
-def run_tests():
-    print("Запуск тестов для words.py")
-    try:
-        test_words_not_empty()
-        test_words_length()
-        test_words_unique()
-        test_words_cyrillic()
-        test_no_empty_strings()
-        print("Тесты пройдены!")
-    except AssertionError as e:
-        print(f"{e} не пройден")
-
-
-if __name__ == '__main__':
-    run_tests()

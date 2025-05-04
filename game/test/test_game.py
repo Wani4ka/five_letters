@@ -43,18 +43,3 @@ def test_multiple_rooms():
     assert room1.room_id == 1, "Некорректный ID первой комнаты"
     assert room2.room_id == 2, "Некорректный ID второй комнаты"
     assert len(game.rooms) == 2, "Должны создаваться несколько комнат"
-
-
-def run_tests():
-    print("Запуск тестов для game.py")
-    try:
-        test_create_room()
-        test_try_guess_correct()
-        test_try_guess_wrong_room()
-        test_multiple_rooms()
-        print("Тесты пройдены!")
-    except AssertionError as e:
-        print(f"{e} не пройден")
-
-
-run_tests()
