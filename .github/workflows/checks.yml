@@ -47,3 +47,4 @@ jobs:
         uses: thollander/actions-comment-pull-request@v3
         with:
           file-path: coverage.md
+          comment-tag: unit-coverage
