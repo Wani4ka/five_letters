@@ -14,3 +14,8 @@ extend-select = [
   "I",   # isort (import sorting)
   "W",   # additional warnings like W292
 ]
+
+[tool.coverage.run]
+omit = [
+  "*/test/*"
+]
