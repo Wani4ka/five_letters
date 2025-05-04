@@ -3,8 +3,13 @@
 #########
 
 # Запускает юнит-тесты
-unit-test: install-deps
+unit-tests: install-deps
 	pytest -v
+
+# Запускает юнит-тесты в выводит покрытие по ним
+unit-coverage: install-deps
+	coverage run -m pytest -v
+	coverage report -m --skip-empty
 
 ##########
 # Линтер #
@@ -30,4 +35,4 @@ upgrade-pip:
 install-deps: upgrade-pip
 	pip install -r requirements.txt
 
-.PHONY: lint upgrade-pip install-deps lint-fix
+.PHONY: lint upgrade-pip install-deps lint-fix unit-tests unit-coverage

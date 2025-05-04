@@ -34,7 +34,7 @@ jobs:
         run: |
           make install-deps
           coverage run -m pytest -v
-          coverage report > coverage.txt
+          coverage report -m --skip-empty > coverage.txt
           echo "Покрытие кода юнит-тестами:" > coverage.md
           coverage report --format=markdown -m --skip-empty >> coverage.md
       - name: Upload coverage report
