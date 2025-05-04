@@ -44,10 +44,10 @@ def test_multiple_rooms():
 def run_tests():
     print("Запуск тестов для game.py")
     try:
-        test_create_room,
-        test_try_guess_correct,
-        test_try_guess_wrong_room,
-        test_multiple_rooms
+        test_create_room()
+        test_try_guess_correct()
+        test_try_guess_wrong_room()
+        test_multiple_rooms()
         print("Тесты пройдены!")
     except AssertionError as e:
         print(f"{e} не пройден")
