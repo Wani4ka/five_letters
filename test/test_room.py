@@ -47,5 +47,5 @@ def test_try_guess_letter_in_word():
     room = Room(room_id=1)
     room.word = "APPLE"
     response = room.try_guess("peach")  # Буква 'P' есть в 'APPLE', но на другой позиции
-    assert response == [1, 0, 0, 0, 0], "Некорректный ответ для буквы в слове, но не на позиции"
+    assert response == [1, 1, 1, 0, 0], "Некорректный ответ для буквы в слове, но не на позиции"
     assert room.attempts == 1, "Счетчик попыток должен увеличиться"
