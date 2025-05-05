@@ -40,3 +40,12 @@ def test_is_finished_max_attempts():
     room = Room(room_id=1)
     room.attempts = Room.max_attempts
     assert room.is_finished("xxxxx"), "Игра должна завершиться при max_attempts"
+
+
+def test_try_guess_letter_in_word():
+    """Проверка случая, когда буква есть в слове, но на другой позиции."""
+    room = Room(room_id=1)
+    room.word = "APPLE"
+    response = room.try_guess("peach")  # Буква 'P' есть в 'APPLE', но на другой позиции
+    assert response == [1, 0, 0, 0, 0], "Некорректный ответ для буквы в слове, но не на позиции"
+    assert room.attempts == 1, "Счетчик попыток должен увеличиться"
