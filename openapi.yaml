@@ -1,0 +1,182 @@
+openapi: 3.1.1
+info:
+  title: Five Letters
+  description: |-
+    Это сервис стандартной игры в слова (5 букв, Wordle). Он умеет создавать новую игру и реализует попытку угадать слово в созданной игре.
+  version: 0.5.0
+externalDocs:
+  description: "Правила игры"
+  url: "https://lifehacker.ru/wordle-5-alternativ/"
+tags:
+  - name: rooms
+    description: Все, связанное с комнатами ("играми")
+  - name: attempts
+    description: Все, связанное с попытками внутри комнат
+paths:
+  /rooms:
+    post:
+      tags:
+        - rooms
+      summary: Создание комнаты
+      description: Создает комнату, загадывает случайное слово и возвращает идентификатор созданной комнаты вместе с доступным количеством попыток. Созданная комната автоматически удаляется при правильном угадывании или при исчерпании лимита попыток
+      operationId: createRoom
+      responses:
+        '201':
+          description: Комната успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRoomResponse"
+        default:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /rooms/{roomId}/attempts:
+    post:
+      tags:
+        - attempts
+      summary: Попытка угадывания
+      description: Принимает предположение, какое слово было загадано в комнате, и возвращает ответ, какие буквы в предложенном слове соответствуют с загаданным словом, сколько осталось попыток, и какое слово было загадано (если попыток не осталось)
+      operationId: tryGuess
+      parameters:
+        - name: roomId
+          in: path
+          description: Идентификатор комнаты
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuessRequest"
+      responses:
+        '200':
+          description: Попытка принята, доступны еще попытки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuessResponse'
+        '205':
+          description: Попытка принята, комната удалена (либо закончились попытки, либо слово было угадано)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinalGuessResponse'
+        '400':
+          description: "Передано некорректное слово"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                InvalidLength:
+                  summary: "Некорректная длина"
+                  value: { "error": "Предложенное слово состоит не из пяти символов" }
+                InvalidContents:
+                  summary: "Некорректное содержание"
+                  value: { "error": "Предложенное слово содержит иные символы, кроме букв русского алфавита" }
+        '404':
+          description: "Комната с указанным идентификатором не найдена"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                RoomNotFound:
+                  summary: "Комната не найдена"
+                  value: { "error": "Комната с таким идентификатором не существует или игра в ней была завершена" }
+        default:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    CreateRoomResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+          description: "Идентификатор созданной комнаты"
+          minimum: 1
+        attempts:
+          type: integer
+          format: int32
+          example: 6
+          description: "Количество доступных попыток для угадывания"
+          minimum: 1
+      required:
+        - id
+        - attempts
+    GuessRequest:
+      type: object
+      properties:
+        guess:
+          type: string
+          example: "МЕШОК"
+          description: "Предположительный ответ"
+          minLength: 5
+          maxLength: 5
+          pattern: "^[А-Яа-я]{5,5}$"
+      required:
+        - guess
+    GuessResponse:
+      type: object
+      description: "Возвращается, когда остались еще попытки на угадывание"
+      properties:
+        response:
+          $ref: "#/components/schemas/response"
+        attempts:
+          type: integer
+          format: int32
+          example: 3
+          description: "Количество доступных попыток для угадывания"
+          minimum: 1
+      required:
+        - response
+        - attempts
+    FinalGuessResponse:
+      type: object
+      properties:
+        response:
+          $ref: "#/components/schemas/response"
+        solution:
+          type: string
+          example: "ИЗЛОМ"
+          description: "Правильный ответ (загаданное слово)"
+          minLength: 5
+          maxLength: 5
+          pattern: "^[А-Я]{5,5}$"
+      required:
+        - response
+        - solution
+    response:
+      type: array
+      items:
+        type: integer
+        enum: [0, 1, 2]
+        description: |
+          0 означает, что буквы на этой позиции нет в загаданном слове;
+          
+          2 означает, что буква на этой позиции такая же, как и в загаданном слове;
+          
+          1 означает, что буква есть в загаданном слове, но на другой позиции
+      example: [1, 0, 0, 2, 0]
+      minItems: 5
+      maxItems: 5
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
