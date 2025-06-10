@@ -100,16 +100,7 @@ class WordleRequestHandler(BaseHTTPRequestHandler):
         else:
             room_id = self._parse_room_id(path)
             if room_id is not None:
-                if room_id in game.rooms:
-                    self._handle_submit_attempt(room_id)
-                else:
-                    self._send_json(
-                        404,
-                        {
-                            "error": "Комната с таким идентификатором не существует"
-                            " или игра в ней была завершена"
-                        },
-                    )
+                self._handle_submit_attempt(room_id)
             else:
                 self._send_json(404, {"error": "Неизвестный маршрут"})
 
