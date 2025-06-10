@@ -20,7 +20,7 @@ def test_words_unique():
 
 def test_words_cyrillic():
     """Проверка, что слова содержат только кириллические буквы."""
-    cyrillic_letters = set('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ')
+    cyrillic_letters = set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ")
     for word in words:
         for letter in word:
             assert letter in cyrillic_letters, f"Слово '{word}' содержит некириллический символ"
@@ -28,4 +28,4 @@ def test_words_cyrillic():
 
 def test_no_empty_strings():
     """Проверка на отсутствие пустых строк в списке."""
-    assert '' not in words, "Список слов содержит пустую строку"
+    assert "" not in words, "Список слов содержит пустую строку"
