@@ -45,7 +45,7 @@ class WordleRequestHandler(BaseHTTPRequestHandler):
     def _handle_create_room(self):
         """Обработка создания новой игровой комнаты"""
         room = game.create_room()
-        self._send_json(201, {"id": room.room_id, "attempts": room.max_attempts})
+        self._send_json(201, {"id": room.room_id, "attempts": room.attempts})
 
     def _handle_submit_attempt(self, room_id: int):
         """Обработка отправки попытки угадывания"""
@@ -61,35 +61,23 @@ class WordleRequestHandler(BaseHTTPRequestHandler):
             self._send_json(400, {"error": "Поле 'guess' должно быть строкой"})
             return
 
-        if len(guess) != 5:
-            self._send_json(400, {"error": "Предложенное слово состоит не из пяти символов"})
-            return
-
         # Обработка игровой логики
         try:
-            room = game.rooms[room_id]
-            response_list, finished, solution = game.try_guess(room_id, guess)
+            response_list, finished, attempts, solution = game.try_guess(room_id, guess)
         except ValueError as e:
             self._send_json(400, {"error": str(e)})
             return
-        except KeyError:
-            self._send_json(
-                404,
-                {
-                    "error": "Комната с таким идентификатором не существует"
-                    " или игра в ней была завершена"
-                },
-            )
+        except KeyError as e:
+            self._send_json(404, {"error": str(e).strip("'")})
             return
 
         # Формирование ответа
         if finished:
             self._send_json(205, {"response": response_list, "solution": solution})
         else:
-            attempts_left = room.max_attempts - room.attempts
-            self._send_json(200, {"response": response_list, "attempts": attempts_left})
+            self._send_json(200, {"response": response_list, "attempts": attempts})
 
-    def do_POST(self):  # noqa: N802
+    def do_POST(self):  # noqa: N802 название функции взято из документации библиотеки
         """Маршрутизация POST-запросов"""
         parsed = urlparse(self.path)
         path = parsed.path

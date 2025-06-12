@@ -1,6 +1,8 @@
+import json
+
 import requests
 
-hostname = 'http://localhost:8008'
+hostname = "http://localhost:8008"
 
 def call_create_room():
     try:
@@ -22,7 +24,7 @@ def call_try_guess(room_id, guess):
     try:
         r = requests.post(
             f'{hostname}/rooms/{room_id}/attempts',
-            data=f'''{{"guess":"{guess}"}}''',
+            data=json.dumps({'guess': guess}),
         )
     except Exception as e:
         raise AssertionError("Запрос должен выполниться без ошибок") from e

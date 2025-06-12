@@ -19,7 +19,7 @@ jobs:
         run: |
           make lint
 
-  test:
+  unit-test:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -30,17 +30,19 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           cache: 'pip'
-      - name: Run unit tests
+      - name: Install dependencies
+        run: make install-deps
+      - name: Run unit tests with coverage
+        run: make unit-coverage
+      - name: Collect coverage
         run: |
-          make install-deps
-          coverage run -m pytest -v
           coverage report -m --skip-empty > coverage.txt
           echo "Покрытие кода юнит-тестами:" > coverage.md
           coverage report --format=markdown -m --skip-empty >> coverage.md
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report
+          name: code-coverage-report-unit
           path: coverage.txt
       - name: Comment on PR
         if: github.event_name == 'pull_request'
@@ -48,3 +50,35 @@ jobs:
         with:
           file-path: coverage.md
           comment-tag: unit-coverage
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ vars.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          cache: 'pip'
+      - name: Install dependencies
+        run: make install-deps
+      - name: Run tests
+        run: make e2e-tests-bundled
+      - name: Collect coverage
+        run: |
+          coverage report -m --skip-empty > coverage.txt
+          echo "Покрытие кода e2e-тестами:" > coverage.md
+          coverage report --format=markdown -m --skip-empty >> coverage.md
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report-e2e
+          path: coverage.txt
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          file-path: coverage.md
+          comment-tag: e2e-coverage

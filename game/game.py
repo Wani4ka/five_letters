@@ -1,8 +1,5 @@
 from game.room import Room
 
-# Множество допустимых русских букв (в верхнем регистре)
-RUSSIAN_LETTERS = set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ")
-
 
 class Game:
     def __init__(self):
@@ -15,13 +12,10 @@ class Game:
         self.next_room_id += 1
         return room
 
-    def try_guess(self, room_id: int, guess: str) -> tuple[list, bool, str | None]:
+    def try_guess(self, room_id: int, guess: str) -> tuple[list, bool, int, str | None]:
         if room_id not in self.rooms:
-            raise Exception("Комната не найдена")
-
-        if not all(ch.upper() in RUSSIAN_LETTERS for ch in guess):
-            raise ValueError(
-                "Предложенное слово содержит иные символы, кроме букв русского алфавита"
+            raise KeyError(
+                "Комната с таким идентификатором не существует или игра в ней была завершена"
             )
 
         room = self.rooms[room_id]
@@ -32,4 +26,4 @@ class Game:
         if finished:
             solution = room.word
             del self.rooms[room_id]
-        return response, finished, solution
+        return response, finished, room.attempts, solution

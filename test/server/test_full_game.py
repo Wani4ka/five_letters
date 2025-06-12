@@ -7,6 +7,7 @@ from words import words
 LOGGER = logging.getLogger(__name__)
 
 def test_server_full_game():
+    """Тест для прогона позитивного сценария полной игры"""
     room_id, attempts = call_create_room()
 
     while attempts > 0:

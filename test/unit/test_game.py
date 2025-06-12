@@ -17,7 +17,7 @@ def test_try_guess_correct():
     room = game.create_room()
     room.word = "ПЯТКА"
 
-    response, finished, solution = game.try_guess(room.room_id, "пятка")
+    response, finished, attempts, solution = game.try_guess(room.room_id, "пятка")
     assert response == [2, 2, 2, 2, 2], "Некорректный ответ для правильной догадки"
     assert finished, "Игра должна завершиться"
     assert solution == "ПЯТКА", "Должно возвращаться загаданное слово"
@@ -30,8 +30,12 @@ def test_try_guess_wrong_room():
     try:
         game.try_guess(999, "apple")
         raise AssertionError("Ожидалось исключение для несуществующей комнаты")
+    except KeyError as e:
+        assert (str(e).strip("'") ==
+                "Комната с таким идентификатором не существует или игра в ней была завершена"),\
+            "Некорректное сообщение об ошибке"
     except Exception as e:
-        assert str(e) == "Комната не найдена", "Некорректное сообщение об ошибке"
+        raise AssertionError("Ожидалось исключение KeyError") from e
 
 
 def test_multiple_rooms():
