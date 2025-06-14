@@ -12,9 +12,12 @@ class Game:
         self.next_room_id += 1
         return room
 
-    def try_guess(self, room_id: int, guess: str) -> tuple[list, bool, str | None]:
+    def try_guess(self, room_id: int, guess: str) -> tuple[list, bool, int, str | None]:
         if room_id not in self.rooms:
-            raise Exception("Комната не найдена")
+            raise KeyError(
+                "Комната с таким идентификатором не существует или игра в ней была завершена"
+            )
+
         room = self.rooms[room_id]
         response = room.try_guess(guess)
         finished = room.is_finished(guess)
@@ -23,4 +26,4 @@ class Game:
         if finished:
             solution = room.word
             del self.rooms[room_id]
-        return response, finished, solution
+        return response, finished, room.attempts, solution
