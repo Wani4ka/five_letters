@@ -80,7 +80,7 @@ def test_server_try_guess_invalid_body():
 
 def test_server_try_guess_invalid_room_id():
     """Должна возвращаться ошибка, если передать невалидный ID комнаты"""
-    r = call_try_guess(2147483647, "МЕШОК")
+    r = call_try_guess("invalid_room_id", "МЕШОК")
     assert r.status_code == 404, 'Должен возвращаться код ответа 404 "Not Found"'
     response = r.json()
 
@@ -90,8 +90,8 @@ def test_server_try_guess_invalid_room_id():
         "Текст ошибки должен быть согласно спецификации"
 
 def test_server_try_guess_nan_room_id():
-    """Должна возвращаться ошибка, если передать нечисловой ID комнаты"""
-    r = call_try_guess("invalid", "МЕШОК")
+    """Должна возвращаться ошибка, если передать пустой ID комнаты"""
+    r = call_try_guess("/", "МЕШОК")
     assert r.status_code == 404, 'Должен возвращаться код ответа 404 "Not Found"'
     response = r.json()
 

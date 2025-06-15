@@ -19,7 +19,7 @@ jobs:
         run: |
           make lint
 
-  unit-test:
+  test:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -32,53 +32,70 @@ jobs:
           cache: 'pip'
       - name: Install dependencies
         run: make install-deps
-      - name: Run unit tests with coverage
+
+      - name: Run unit tests
+        env:
+          COVERAGE_FILE: .coverage.unit
         run: make unit-coverage
-      - name: Collect coverage
+      - name: Collect unit coverage
+        env:
+          COVERAGE_FILE: .coverage.unit
         run: |
-          coverage report -m --skip-empty > coverage.txt
-          echo "Покрытие кода юнит-тестами:" > coverage.md
-          coverage report --format=markdown -m --skip-empty >> coverage.md
-      - name: Upload coverage report
+          coverage report -m --skip-empty > coverage_unit.txt
+          echo "Покрытие кода юнит-тестами:" > coverage_unit.md
+          coverage report --format=markdown -m --skip-empty >> coverage_unit.md
+
+      - name: Run e2e tests
+        env:
+          COVERAGE_FILE: .coverage.e2e
+        run: make e2e-tests-bundled
+      - name: Collect e2e coverage
+        env:
+          COVERAGE_FILE: .coverage.e2e
+        run: |
+          coverage report -m --skip-empty > coverage_e2e.txt
+          echo "Покрытие кода e2e-тестами:" > coverage_e2e.md
+          coverage report --format=markdown -m --skip-empty >> coverage_e2e.md
+
+      - name: Combine combined
+        run: coverage combine
+      - name: Collect full coverage
+        run: |
+          coverage report -m --skip-empty > coverage_full.txt
+          echo "Совокупное покрытие кода тестами:" > coverage_full.md
+          coverage report --format=markdown -m --skip-empty >> coverage_full.md
+
+      - name: Upload unit coverage report
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-unit
-          path: coverage.txt
-      - name: Comment on PR
-        if: github.event_name == 'pull_request'
-        uses: thollander/actions-comment-pull-request@v3
-        with:
-          file-path: coverage.md
-          comment-tag: unit-coverage
-
-  e2e-test:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ vars.PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          cache: 'pip'
-      - name: Install dependencies
-        run: make install-deps
-      - name: Run tests
-        run: make e2e-tests-bundled
-      - name: Collect coverage
-        run: |
-          coverage report -m --skip-empty > coverage.txt
-          echo "Покрытие кода e2e-тестами:" > coverage.md
-          coverage report --format=markdown -m --skip-empty >> coverage.md
-      - name: Upload coverage report
+          path: coverage_unit.txt
+      - name: Upload e2e coverage report
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-e2e
-          path: coverage.txt
-      - name: Comment on PR
+          path: coverage_e2e.txt
+      - name: Upload full coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report-full
+          path: coverage_full.txt
+
+      - name: Comment unit coverage on PR
         if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v3
         with:
-          file-path: coverage.md
+          file-path: coverage_unit.md
+          comment-tag: unit-coverage
+      - name: Comment e2e coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          file-path: coverage_e2e.md
           comment-tag: e2e-coverage
+      - name: Comment full coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          file-path: coverage_full.md
+          comment-tag: full-coverage

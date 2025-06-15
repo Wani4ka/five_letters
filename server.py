@@ -2,10 +2,11 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 
+import storage_factory
 from game.game import Game  # Импорт игровой логики
 
 # Инициализация менеджера игры
-game = Game()
+game = Game(storage_factory.from_os_environ())
 
 
 class WordleRequestHandler(BaseHTTPRequestHandler):
@@ -20,15 +21,13 @@ class WordleRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(payload)
 
-    def _parse_room_id(self, path: str) -> int | None:
+    def _parse_room_id(self, path: str) -> str | None:
         """Извлекает ID комнаты из пути вида /rooms/<room_id>/attempts"""
         parts = path.split("/")
         if len(parts) != 4 or parts[1] != "rooms" or parts[3] != "attempts":
             return None
-        try:
-            return int(parts[2])
-        except ValueError:
-            return None
+        else:
+            return parts[2]
 
     def _read_json_body(self) -> dict | None:
         """Читает и парсит JSON-тело запроса с обработкой ошибок"""
@@ -47,7 +46,7 @@ class WordleRequestHandler(BaseHTTPRequestHandler):
         room = game.create_room()
         self._send_json(201, {"id": room.room_id, "attempts": room.attempts})
 
-    def _handle_submit_attempt(self, room_id: int):
+    def _handle_submit_attempt(self, room_id: str):
         """Обработка отправки попытки угадывания"""
         # Получение и валидация тела запроса
         payload = self._read_json_body()
