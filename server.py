@@ -2,10 +2,11 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 
+import storage_factory
 from game.game import Game  # Импорт игровой логики
 
 # Инициализация менеджера игры
-game = Game()
+game = Game(storage_factory.from_os_environ())
 
 
 class WordleRequestHandler(BaseHTTPRequestHandler):
