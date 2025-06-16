@@ -4,7 +4,7 @@ import requests
 
 hostname = "http://localhost:8008"
 
-def call_create_room():
+def call_create_room() -> (str, int):
     try:
         r = requests.post(f'{hostname}/rooms')
     except Exception as e:
@@ -13,14 +13,14 @@ def call_create_room():
     response = r.json()
 
     assert "id" in response, "Должен присутствовать корректный идентификатор комнаты"
-    assert response["id"] > 0, "Идентификатор комнаты должен быть положительный"
+    assert response["id"] != "", "Идентификатор комнаты не должен быть пустым"
 
     assert "attempts" in response, "Должно присутствовать корректное количество попыток"
     assert response["attempts"] > 0, "Количество попыток должно быть положительно"
 
     return response["id"], response["attempts"]
 
-def call_try_guess(room_id, guess):
+def call_try_guess(room_id: str, guess: str) -> requests.Response:
     try:
         r = requests.post(
             f'{hostname}/rooms/{room_id}/attempts',

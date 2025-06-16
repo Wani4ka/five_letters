@@ -43,4 +43,4 @@ upgrade-pip:
 install-deps: upgrade-pip
 	pip install -r requirements.txt
 
-.PHONY: lint upgrade-pip install-deps lint-fix unit-tests unit-coverage
+.PHONY: lint upgrade-pip install-deps lint-fix unit-tests unit-coverage e2e-tests e2e-tests-bundled

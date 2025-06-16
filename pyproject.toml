@@ -19,6 +19,7 @@ extend-select = [
 omit = [
   "*/test/*"
 ]
+source = ["."]
 
 [tool.pytest.ini_options]
 log_cli = true

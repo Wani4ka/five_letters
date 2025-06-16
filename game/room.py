@@ -1,7 +1,3 @@
-from random import choice
-
-from words import words
-
 # Множество допустимых русских букв (в верхнем регистре)
 RUSSIAN_LETTERS = set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ")
 
@@ -9,10 +5,13 @@ RUSSIAN_LETTERS = set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪ�
 class Room:
     max_attempts = 6
 
-    def __init__(self, room_id: int):
+    def __init__(self,
+                 word: str,
+                 room_id: str = None,
+                 attempts: int = max_attempts):
         self.room_id = room_id
-        self.word = choice(words)
-        self.attempts = Room.max_attempts
+        self.word = word
+        self.attempts = attempts
 
     def try_guess(self, guess: str) -> list:
         if len(guess) != 5:
